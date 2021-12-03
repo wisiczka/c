@@ -1,82 +1,5 @@
 
-#define MAX_STR_SZ 256
-#define MAX_TRAVELABLE_ROOMS 10
-#define MAX_ROOMS 10
-#define MAX_VERBS 20
-#define MAX_NOUNS 20
-#define MAX_CONVERSATIONS 20
-#define GOD_ID 9999
 
-
-
-// Tile types; these are used on the map
-typedef enum
-{
-  tile_error,
-  tile_grass,
-  tile_path,
-  tile_sand,
-  tile_gravel,
-  tile_wall,
-  tile_fence,
-  tile_water,
-  tile_tree,
-  tile_rock,
-  tile_door_closed,
-  tile_door_open,
-  tile_toilet,
-  tile_sink
-} tile_t;
-
-// Animal types
-typedef enum
-{
-  nobody,
-  the_player,
-  anml_anteater,
-  anml_alligator,
-  anml_boar,
- 
-  anml_last // Size of array
-} animal_t;
-
-
-
-// Holds the character ORed with curses
-// attributes used to display each animal
-chtype anml_glyph[anml_last];
-
-// These are used during map generation
-// Each animal has a preferred terrain type
-typedef enum
-{
-  terr_grass,
-  terr_forest,
-  terr_savannah,
-  terr_arctic,
-  terr_pond
-} terrain_t;
-
-// Used during generation; these are the animals not yet placed on the
-// map. After one is used its slot will be set to "nobody".
-int animals[anml_last];
-
-struct Conversation {
-	
-	int id;
-	char question[50];
-	char answer[500];
-	int show_inventory;
-	int leave_phrase;
-	int owner_id;
-	
-	
-	
-};
-
-
-
-void create_conversation(struct Conversation *conversation, int id, int owner_id, char* question,char* answer, int show_inventory, int leave_phrase);
 
 void create_conversation(struct Conversation *conversation, int id, int owner_id, char* question,char* answer, int show_inventory, int leave_phrase)
 
@@ -98,46 +21,6 @@ void create_conversation(struct Conversation *conversation, int id, int owner_id
 }
 
 
-
-//////////CREATURE
-
-struct Noun {
-	char  name[50];
-	char description[500];
-	int happy;
-	int noun_id;
-	int owner_id;
-	int health;
-	int position; 
-	int wielded; 
-	char gender[20];
-	char subject_pronoun[16]; 
-	char object_pronoun[16]; 
-	
-	char reflexive_pronoun[21]; 
- //  char ip_pronoun[8];
- //   char dp_pronoun[8];  
-	int alive;
-	int animate;
-	int base_cost;
-	int gold;
-	int damage;
-	int defense;
-	int main_quest;
-	  int y;
-  int x;
-  animal_t type;
-
- //  int weight;
-  // int size;
-
-
-};
-
-
-
-void create_noun(struct Noun *subject, char* name, int def_happy, int id, int helf, int pos, char* gender, char* subject_pronoun, char* object_pronoun,char* description,
-	int base_cost,  int damage,  int defense, int gold);
 
 
 void create_noun(struct Noun *subject, char* name, int def_happy, int id, int helf, int pos, char* gender, char* subject_pronoun, char* object_pronoun,char* description,
@@ -186,26 +69,6 @@ void create_noun(struct Noun *subject, char* name, int def_happy, int id, int he
 
 
 
-
-
-
-
-
-
-struct Room {
-	char  name[50];
-	char description[500];
-	int position;
-
-	int travelable_rooms[MAX_TRAVELABLE_ROOMS];
-
-
-
-
-};
-
-
-void create_room(struct Room *room, char*  name,char* description, int position, int travelable_rooms[]);
 
 
 void create_room(struct Room *room, char*  name,char* description, int position, int travelable_rooms[])
@@ -632,24 +495,13 @@ void talk(struct Noun *subject , struct Noun *direct_object ,struct Conversation
 
 
 
-	struct Noun nouns[MAX_NOUNS];
-	struct Room rooms[MAX_ROOMS];
-	struct Conversation conversations[MAX_CONVERSATIONS];
-	struct Noun * player;
-
-
-	int gamerun =1; 
-	int timee =0;
-	
-
-
 
 
 /*
   Tries to move the player SPEED_Y north/south and SPEED_X left/right.
   Returns false if the way is blocked.
 */
-bool move_player(int speed_y, int speed_x)
+bool move_player(int speed_y, int speed_x,struct Noun * nouns)
 {
   int new_y;
   int new_x;
@@ -667,13 +519,13 @@ bool move_player(int speed_y, int speed_x)
   if (gtile(new_y, new_x) == tile_door_closed)
   {
     stile(new_y, new_x, tile_door_open);
-    calc_fov();
+    calc_fov(nouns);
     return true;
   }
 
   // Is something in the way?
 
-  if (blocking(new_y, new_x) & (CANT_MOVE | SOMEONE_THERE))
+  if (blocking(new_y, new_x, nouns) & (CANT_MOVE | SOMEONE_THERE))
     return false;
 
   // The way is clear; go there
@@ -682,7 +534,7 @@ bool move_player(int speed_y, int speed_x)
   player->x = new_x;
 
   recenter();
-  calc_fov();
+  calc_fov(nouns);
 
   return true;
 }

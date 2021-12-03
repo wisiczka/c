@@ -1,4 +1,4 @@
-void parse(){
+void parse(struct Noun * nouns, struct Room * rooms, struct Conversation * conversations, int gamerun,int time){
 
 
 
@@ -20,22 +20,22 @@ void parse(){
     
     if (input == key_left)
     {
-      if (move_player(0, -1) == false)
+      if (move_player(0, -1,nouns) == false)
 	goto new_input;
     }
     else if (input == key_right)
     {
-      if (move_player(0, +1) == false)
+      if (move_player(0, +1,nouns) == false)
 	goto new_input;
     }
     else if (input == key_up)
     {
-      if (move_player(-1, 0) == false)
+      if (move_player(-1, 0,nouns) == false)
 	goto new_input;
     }
     else if (input == key_down)
     {
-      if (move_player(+1, 0) == false)
+      if (move_player(+1, 0,nouns) == false)
 	goto new_input;
     }
     else if (input == '.' || input == ' ')
@@ -45,7 +45,7 @@ void parse(){
 
     else if (input == 't')
     {
-      parse_pinput();
+      parse_pinput(nouns, rooms,conversations, gamerun,time);
 
     }
 
@@ -180,7 +180,7 @@ for( i = 0; ((i < tokencounter)) ; i++){
       if (!noun1_parse && noun2_parse){
 
 
-        for( second_noun = 0; (strcmp(nouns[second_noun].name, "BUFFER NAME") && noun2_parse); second_noun = second_noun + 1 ){
+        for( second_noun = 0; strcmp(nouns[second_noun].name, "BUFFER NAME") && noun2_parse; second_noun = second_noun + 1 ){
       noun2_parse = strcmp(tokenized_parse[i], nouns[second_noun].name);
       
       
@@ -197,7 +197,7 @@ for( i = 0; ((i < tokencounter)) ; i++){
 
       if (noun1_parse){
 
-       for( first_noun = 0; (strcmp(nouns[first_noun].name, "BUFFER NAME") && noun1_parse); first_noun = first_noun + 1 ){
+       for( first_noun = 0; strcmp(nouns[first_noun].name, "BUFFER NAME") && noun1_parse; first_noun = first_noun + 1 ){
       noun1_parse = strcmp(tokenized_parse[i], nouns[first_noun].name);
       
       

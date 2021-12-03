@@ -11,39 +11,6 @@
 #define MAX(a,b) ((a > b) ? (a) : (b))
 #define MIN(a,b) ((a < b) ? (a) : (b))
 
-// Function prototypes
-void init(void);
-void shutdown(void);
-void draw_map(void);
-void init_map(void);
-void play(void);
-void parse(void);
-void bsp_split(int t, int l, int h, int w, bool vert);
-bool move_player(int speed_y, int speed_x);
-void fill_area(int t, int l, int h, int w);
-void populate(int t, int l, int b, int r);
-int new_animal(void);
-int animal_terrain(int type);
-void legend(void);
-void parsebox(void);
-void calc_fov(void);
-void move_animals(void);
-int blocking(int y, int x);
-void make_entrance(void);
-void recenter(void);
-void fill_special(int t, int l, int h, int w);
-void house(int t, int l, int h, int w);
-int lazy(int type);
-int gtile(int y, int x);
-void stile(int y, int x, int tile);
-void tilefill(int t, int l, int b, int r, int tile);
-
-void parse_pinput();
-void removeStringTrailingNewline(char *str) ;
-
-
-void init_nouns();
-
 // How much of the map we display at any time
 #define BOARD_W 60
 #define BOARD_H 24
@@ -71,8 +38,6 @@ void init_nouns();
 #define BSP_MAX_H 32
 
 
-// How many mobs (animals) the map can hold || will replace max_nouns
-#define MAX_MOBS 250
 
 // Used during generation; this is the index of the next mob_t we can
 // use for placing animals. Index 0 is reserved for the player.
@@ -216,3 +181,198 @@ float sin_tbl[360] = {
   -0.207912, -0.190809, -0.173648, -0.156434, -0.139173, -0.121869,
   -0.104529, -0.087156, -0.069756, -0.052336, -0.034900, -0.017453
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+#define MAX_STR_SZ 256
+#define MAX_TRAVELABLE_ROOMS 10
+#define MAX_ROOMS 10
+#define MAX_VERBS 20
+#define MAX_NOUNS 20
+#define MAX_CONVERSATIONS 20
+#define GOD_ID 9999
+
+
+
+// Tile types; these are used on the map
+typedef enum
+{
+  tile_error,
+  tile_grass,
+  tile_path,
+  tile_sand,
+  tile_gravel,
+  tile_wall,
+  tile_fence,
+  tile_water,
+  tile_tree,
+  tile_rock,
+  tile_door_closed,
+  tile_door_open,
+  tile_toilet,
+  tile_sink
+} tile_t;
+
+// Animal types
+typedef enum
+{
+  nobody,
+  the_player,
+  anml_anteater,
+  anml_alligator,
+  anml_boar,
+ 
+  anml_last // Size of array
+} animal_t;
+
+
+
+// Holds the character ORed with curses
+// attributes used to display each animal
+chtype anml_glyph[anml_last];
+
+// These are used during map generation
+// Each animal has a preferred terrain type
+typedef enum
+{
+  terr_grass,
+  terr_forest,
+  terr_savannah,
+  terr_arctic,
+  terr_pond
+} terrain_t;
+
+// Used during generation; these are the animals not yet placed on the
+// map. After one is used its slot will be set to "nobody".
+int animals[anml_last];
+
+struct Conversation {
+  
+  int id;
+  char question[50];
+  char answer[500];
+  int show_inventory;
+  int leave_phrase;
+  int owner_id;
+  
+  
+  
+};
+
+
+
+
+
+
+
+
+
+
+
+//////////CREATURE
+
+struct Noun {
+  char  name[50];
+  char description[500];
+  int happy;
+  int noun_id;
+  int owner_id;
+  int health;
+  int position; 
+  int wielded; 
+  char gender[20];
+  char subject_pronoun[16]; 
+  char object_pronoun[16]; 
+  
+  char reflexive_pronoun[21]; 
+ //  char ip_pronoun[8];
+ //   char dp_pronoun[8];  
+  int alive;
+  int animate;
+  int base_cost;
+  int gold;
+  int damage;
+  int defense;
+  int main_quest;
+    int y;
+  int x;
+  animal_t type;
+
+ //  int weight;
+  // int size;
+
+
+};
+
+
+
+
+struct Room {
+  char  name[50];
+  char description[500];
+  int position;
+
+  int travelable_rooms[MAX_TRAVELABLE_ROOMS];
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+// Function prototypes
+void init(void);
+void shutdown(void);
+void draw_map(struct Noun * nouns);
+void init_map( struct Noun * nouns);
+void play(void);
+void parse(struct Noun * nouns, struct Room * rooms, struct Conversation * conversations, int gamerun,int time);
+void bsp_split(int t, int l, int h, int w, bool vert, struct Noun * nouns);
+bool move_player(int speed_y, int speed_x,struct Noun * nouns);
+void fill_area(int t, int l, int h, int w, struct Noun * nouns);
+void populate(int t, int l, int b, int r, struct Noun * nouns);
+int new_animal(void);
+int animal_terrain(int type);
+void legend(void);
+void parsebox(void);
+void calc_fov(struct Noun * nouns);
+void move_animals(void);
+int blocking(int y, int x, struct Noun * nouns);
+void make_entrance(void);
+void recenter(void);
+void fill_special(int t, int l, int h, int w);
+void house(int t, int l, int h, int w);
+int lazy(int type);
+int gtile(int y, int x);
+void stile(int y, int x, int tile);
+void tilefill(int t, int l, int b, int r, int tile);
+
+void parse_pinput();
+void removeStringTrailingNewline(char *str) ;
+
+void create_noun(struct Noun *subject, char* name, int def_happy, int id, int helf, int pos, char* gender, char* subject_pronoun, char* object_pronoun,char* description,
+  int base_cost,  int damage,  int defense, int gold);
+
+void create_conversation(struct Conversation *conversation, int id, int owner_id, char* question,char* answer, int show_inventory, int leave_phrase);
+void create_room(struct Room *room, char*  name,char* description, int position, int travelable_rooms[]);
+void init_nouns();
+
+
+  struct Noun * player;

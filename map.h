@@ -7,7 +7,7 @@
   the direction with VERT. Once the map has been split into pieces
   small enough, it will build something interesting in that location.
 */
-void bsp_split(int t, int l, int h, int w, bool vert)
+void bsp_split(int t, int l, int h, int w, bool vert, struct Noun * nouns)
 {
   int new_w;
   int new_h;
@@ -15,7 +15,7 @@ void bsp_split(int t, int l, int h, int w, bool vert)
   // If the rectangle is small enough, build something
   if (h <= BSP_MAX_H && w <= BSP_MAX_W)
   {
-    fill_area(t, l , h, w);
+    fill_area(t, l , h, w, nouns);
     return;
   }
 
@@ -37,14 +37,14 @@ void bsp_split(int t, int l, int h, int w, bool vert)
   if (!vert || (h <= BSP_MAX_H && w > BSP_MAX_W))
   {
     new_w = (w / 2) - 3 + rand() % 7;
-    bsp_split(t, l, h, new_w, true);
-    bsp_split(t, l + new_w + 1, h, w - (new_w + 1), true);
+    bsp_split(t, l, h, new_w, true,nouns);
+    bsp_split(t, l + new_w + 1, h, w - (new_w + 1), true, nouns);
   }
   else if (vert || (h > BSP_MAX_H && w <= BSP_MAX_W))
   {
     new_h = (h / 2) - 2 + rand() % 5;
-    bsp_split(t, l, new_h, w, false);
-    bsp_split(t + new_h + 1, l, h - (new_h + 1), w, false);
+    bsp_split(t, l, new_h, w, false, nouns);
+    bsp_split(t + new_h + 1, l, h - (new_h + 1), w, false, nouns);
   }
 
   return;
@@ -56,7 +56,7 @@ void bsp_split(int t, int l, int h, int w, bool vert)
   Tries to build an animal enclosure in the box described by T, L, H,
   W (with a small chance something "special" will be build instead).
  */
-void fill_area(int t, int l, int h, int w)
+void fill_area(int t, int l, int h, int w, struct Noun * nouns)
 {
   int y;
   int x;
@@ -234,7 +234,7 @@ void fill_area(int t, int l, int h, int w)
   
   // Let someone move in. Note this box is one smaller than the
   // enclosure itself.
-  populate(box_t + 1, box_l + 1, box_b - 1, box_r - 1);
+  populate(box_t + 1, box_l + 1, box_b - 1, box_r - 1 , nouns);
 
   return;
 }
@@ -599,7 +599,7 @@ void make_entrance()
 /*
   Adds an animal with suitable terrain to the rectangle (T,L)-(B,R).
 */
-void populate(int t, int l, int b, int r)
+void populate(int t, int l, int b, int r,   struct Noun * nouns)
 {
   int type;
   int terrain;
@@ -723,12 +723,12 @@ void populate(int t, int l, int b, int r)
 
   mobs = 2 + rand() % 6;
 
-  while (mobs && next_mob < MAX_MOBS)
+  while (mobs && next_mob < MAX_NOUNS)
   {
     nouns[next_mob].y = t + rand() % MAX(1, (b - t));
     nouns[next_mob].x = l + rand() % MAX(1, (r - l));
 
-    if ((blocking(nouns[next_mob].y, nouns[next_mob].x) & CANT_MOVE) == 0)
+    if ((blocking(nouns[next_mob].y, nouns[next_mob].x, nouns) & CANT_MOVE) == 0)
     {
       nouns[next_mob].type = type;
       next_mob++;

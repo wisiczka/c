@@ -3,7 +3,7 @@
 /*
   Draws the map and updates the screen.
 */
-void draw_map()
+void draw_map(struct Noun * nouns)
 {
   int y;
   int x;
@@ -91,7 +91,7 @@ void draw_map()
 
   // Draws mobs, but only those currently within view.
 
-  for (i = 0; i < MAX_MOBS; i++)
+  for (i = 0; i < MAX_NOUNS; i++)
   {
     if (nouns[i].type == nobody)
       break; // No use proceeding
@@ -220,7 +220,7 @@ void recenter()
 /*
   Recalculates field of view.
 */
-void calc_fov()
+void calc_fov(struct Noun * nouns)
 {
   float fy;
   float fx;
@@ -273,7 +273,7 @@ void calc_fov()
 
       fov[y][x] |= FOV_IN_VIEW | FOV_SEEN;
 
-      if (blocking(y, x) & CANT_SEE)
+      if (blocking(y, x,nouns) & CANT_SEE)
   break; // Can't see any further in this direction
     }
   }
@@ -288,7 +288,7 @@ void calc_fov()
 /*
   Returns a bitmask of the blocking properties of the tile at (Y,X).
 */
-int blocking(int y, int x)
+int blocking(int y, int x, struct Noun * nouns)
 {
   int i;
 
@@ -319,7 +319,7 @@ int blocking(int y, int x)
 
   // Check if there is a mob occupying that space
 
-  for (i = 0; i < MAX_MOBS; i++)
+  for (i = 0; i < MAX_NOUNS; i++)
   {
     if (nouns[i].type == nobody)
       break;

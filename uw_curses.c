@@ -43,6 +43,17 @@ void main(void){
 
 
 
+	struct Noun nouns[MAX_NOUNS];
+	struct Room rooms[MAX_ROOMS];
+	struct Conversation conversations[MAX_CONVERSATIONS];
+
+
+
+	int gamerun =1; 
+	int timee =0;
+	
+
+
 
 
 
@@ -87,7 +98,7 @@ void main(void){
 
 
 	init();
-	init_map();
+	init_map(nouns);
 
 	
 
@@ -149,12 +160,12 @@ void main(void){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-  bsp_split(0, 0, MAP_H, MAP_W, true);
+  bsp_split(0, 0, MAP_H, MAP_W, true, nouns);
   make_entrance();
 
 
   recenter();
-  calc_fov();
+  calc_fov(nouns);
 
 
 
@@ -171,7 +182,7 @@ void main(void){
 
 
 ///	printf("You are in line to board a submarine. It is a refitted Ohio class SSBN that now functions primarily as a research vessel in the Arctic.\n");printf("The person in front of you has just finished being checked by the greeter, and you walk up to him. \n");printf("Following a cheery hello, the gray haired gentleman asks you for your name.\n")	printf("Ah wonderful ! Please come inside. The man says. \n");	printf("You board the ship and after a few ladders and stairs find yourself in the mess hall which has been converted into a fairly presentable dining room. \n");	printf("");
-	 draw_map();
+	 draw_map(nouns);
     legend();
 		  parsebox();
 
@@ -196,7 +207,7 @@ void main(void){
 
 		timee++;
 
-		draw_map();
+		draw_map(nouns);
     legend();
 	///	  parsebox();
 
@@ -207,7 +218,7 @@ void main(void){
   //  wnoutrefresh(disp2);
    // doupdate();
 
-    parse();
+    parse(nouns, rooms,conversations, gamerun,timee);
 	//	parse_pinput(nouns, rooms,conversations, gamerun,timee);
 
 

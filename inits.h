@@ -71,7 +71,7 @@ void shutdown()
 
 
 
-void init_map()
+void init_map(struct Noun * nouns)
 {
   int y;
   int x;
