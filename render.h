@@ -143,21 +143,16 @@ void parsebox()
 
 
 
-void legend()
+void legend(struct Noun * nouns)
 {
-  int type;
-  int i;
-  int printed = 0;
-  int y;
-  int x;
-  bool seen;
+
 
   werase(disp);
 
   wmove(disp, 0, 0);
   waddstr(disp, "info");
 
- 
+print_visible(nouns);
 
   wmove(disp, (BOARD_H+DISP_H) - 1, 0);
   waddstr(disp, "qt/3.14");
@@ -167,7 +162,73 @@ void legend()
 
 
 
+void print_visible(struct Noun * nouns){
 
+    int type;
+  int i;
+  int printed = 0;
+  int y;
+  int x;
+  bool seen;
+
+  // Loop through each type of animal, check if any of them are
+  // visible to the player.
+
+  for (type = anml_anteater; type < anml_last; type++)
+  {
+    seen = false;
+
+    for (i = 1; i < MAX_NOUNS; i++)
+    {
+      if (nouns[i].type == nobody)
+  break; // No use proceeding
+
+      if (nouns[i].type != type)
+  continue;
+
+      // This is the animal we are looking for
+
+      y = nouns[i].y;
+      x = nouns[i].x;
+
+      // Is it on the map and within FOV?
+
+      if (y < 0 || y >= MAP_H ||
+    x < 0 || x >= MAP_W ||
+    (fov[y][x] & FOV_IN_VIEW) == 0)
+      {
+  continue;
+      }
+
+      // Is it on the screen? (Just being within FOV isn't enough)
+      
+      if (y - view_y >= 0 && y - view_y < BOARD_H &&
+    x - view_x >= 0 && x - view_x < BOARD_W)
+      {
+  seen = true;
+  break;
+      }
+    }
+
+    if (seen)
+    {
+      // The animal is on screen. Draw its glyph followed by its name.
+
+      wmove(disp, 2 + printed, 0);
+
+      waddch(disp, anml_glyph[type]);
+      waddch(disp, ' ');
+      waddstr(disp, anml_name[type]);
+
+      printed++;
+
+      if (printed >= 20)
+  break; // We've run out of space (highly unlikely)
+    }
+  }
+
+
+}
 
 
 

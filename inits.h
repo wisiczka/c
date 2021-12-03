@@ -18,7 +18,7 @@ void init()
 
   board = newwin(BOARD_H, BOARD_W, 0, 0);
   disp2  = newwin(DISP_H, DISP_W , BOARD_H, 0);
-  disp  = newwin(BOARD_H+DISP_H, 10, 0, BOARD_W + 1);
+  disp  = newwin(BOARD_H+DISP_H, 30, 0, BOARD_W + 1);
 
 #ifdef WIN32
   key_left  = 260;

@@ -190,10 +190,6 @@ float sin_tbl[360] = {
 
 
 
-
-
-
-
 #define MAX_STR_SZ 256
 #define MAX_TRAVELABLE_ROOMS 10
 #define MAX_ROOMS 10
@@ -275,6 +271,17 @@ struct Conversation {
 
 
 
+// Animal names
+char * anml_name[anml_last] =
+{
+  [anml_anteater] = "anteater",
+  [anml_alligator] = "alligator",
+  [anml_boar] = "boar",
+
+};
+
+
+
 
 
 
@@ -350,7 +357,7 @@ void fill_area(int t, int l, int h, int w, struct Noun * nouns);
 void populate(int t, int l, int b, int r, struct Noun * nouns);
 int new_animal(void);
 int animal_terrain(int type);
-void legend(void);
+void legend(struct Noun * nouns);
 void parsebox(void);
 void calc_fov(struct Noun * nouns);
 void move_animals(void);
@@ -373,6 +380,7 @@ void create_noun(struct Noun *subject, char* name, int def_happy, int id, int he
 void create_conversation(struct Conversation *conversation, int id, int owner_id, char* question,char* answer, int show_inventory, int leave_phrase);
 void create_room(struct Room *room, char*  name,char* description, int position, int travelable_rooms[]);
 void init_nouns();
+void print_visible(struct Noun * nouns);
 
 
   struct Noun * player;

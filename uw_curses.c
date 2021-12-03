@@ -183,7 +183,7 @@ void main(void){
 
 ///	printf("You are in line to board a submarine. It is a refitted Ohio class SSBN that now functions primarily as a research vessel in the Arctic.\n");printf("The person in front of you has just finished being checked by the greeter, and you walk up to him. \n");printf("Following a cheery hello, the gray haired gentleman asks you for your name.\n")	printf("Ah wonderful ! Please come inside. The man says. \n");	printf("You board the ship and after a few ladders and stairs find yourself in the mess hall which has been converted into a fairly presentable dining room. \n");	printf("");
 	 draw_map(nouns);
-    legend();
+    legend(nouns);
 		  parsebox();
 
     wnoutrefresh(board);
@@ -208,7 +208,7 @@ void main(void){
 		timee++;
 
 		draw_map(nouns);
-    legend();
+    legend(nouns);
 	///	  parsebox();
 
 		  wrefresh(board);
